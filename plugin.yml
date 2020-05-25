@@ -1,0 +1,8 @@
+name: JobsPayHistory
+main: payHistory.PayHistoryMain
+version: 1.0
+commands:
+   ph:
+       description: history command
+       default: false
+       usage: ph
