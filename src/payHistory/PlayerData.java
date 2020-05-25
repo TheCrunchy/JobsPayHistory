@@ -22,12 +22,10 @@ public class PlayerData {
 		String tempToRemove = "";
 		PayThisRestart += amount;
 		if (history.size() == 10) {
-			for (Entry<String, String> entry : history.entrySet()) {
+
 				String firstKey = history.keySet().stream().findFirst().get();
-			    tempToRemove = firstKey;
-			}
 			
-			history.remove(tempToRemove);
+			history.remove(firstKey);
 		}
 		history.put(date, numberAsString);
 	}
