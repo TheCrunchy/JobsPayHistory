@@ -1,30 +1,42 @@
 package payHistory;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.gamingmesh.jobs.api.JobsPaymentEvent;
 
 public class PayHistoryMain extends JavaPlugin {
+	Plugin plugin;
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PayListener(), this);
 		this.getCommand("ph").setExecutor(new HistoryCommand());
+		this.plugin = this;
 	}
 	private HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
-	
+	ItemStack luckyItem = null; 
+	String itemName = "";
 	public class PayListener implements Listener
 	{
 		@SuppressWarnings("deprecation")
@@ -37,39 +49,264 @@ public class PayHistoryMain extends JavaPlugin {
 			else {
 				data = new PlayerData();
 			}
-			data.addToHistory(event.getAmount());
+			double payment = event.getAmount();
+			double boost = 0;
+			double tempPayment1 = 0;
+			double tempPayment2 = 0;
+			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand() != null) {
+				//do checks for bonus moneys
+				boost = 0;
+				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand();
+				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+					for (String s : item.getItemMeta().getLore()) {
+						switch (s) {
+						case "5% jobs money boost":
+							boost += 0.05;
+							break;
+						case "10% jobs money boost":
+							boost += 0.1;
+							break;
+						case "15% jobs money boost":
+							boost += 0.15;
+							break;
+						case "20% jobs money boost":
+							boost += 0.2;
+							break;
+						case "25% jobs money boost":
+							boost += 0.25;
+							break;
+						case "50% jobs money boost":
+							boost += 0.5;
+							break;
+						}
+					}
+
+				}
+				if (boost > 0) {
+					tempPayment1 = payment * boost;
+				}
+			}
+			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInOffHand() != null) {
+				//do checks for bonus moneys
+				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInOffHand();
+				boost = 0;
+				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+					for (String s : item.getItemMeta().getLore()) {
+						switch (s) {
+						case "5% jobs money boost":
+							boost += 0.05;
+							break;
+						case "10% jobs money boost":
+							boost += 0.1;
+							break;
+						case "15% jobs money boost":
+							boost += 0.15;
+							break;
+						case "20% jobs money boost":
+							boost += 0.2;
+							break;
+						case "25% jobs money boost":
+							boost += 0.25;
+							break;
+						case "50% jobs money boost":
+							boost += 0.5;
+							break;
+						}
+
+					}
+				}
+				if (boost > 0) {
+					tempPayment2 = payment * boost;
+				}
+			}	
+			double randDouble = Math.random();
+
+
+			payment = payment + tempPayment1 + tempPayment2;
+
+			data.addToHistory(payment);
 			players.put(event.getPlayer().getUniqueId(), data);
+			DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+			String numberAsString = decimalFormat.format(payment);
+			event.setAmount(payment);
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Jobs payment : §6" + numberAsString);
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
+			boolean rewarded = false;
+
+
+			Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
+			if(randDouble <= 0.2) {
+				//10% chance of getting an item
+
+				randDouble = Math.random();
+				if(randDouble <= 0.1) {
+					if (rewarded) {
+						return;
+					}
+					rewarded = true;
+
+				
+					if (rewarded) {
+						return;
+					}
+					rewarded = true;
+					
+					luckyItem = new ItemStack(Material.SLIME_BALL, 1);
+					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+					meta.setCustomModelData(3);
+					meta.setDisplayName("§6Gold Coin");
+					ArrayList<String> lore = new ArrayList<String>();
+					lore.add("§3Tier 3");
+					lore.add("§6§l§6§l");
+					meta.setLore(lore);
+					luckyItem.setItemMeta(meta);
+					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+					itemName = ("§6§l1 Gold Coin");
+				
+				}
+
+
+				if(randDouble <= 0.3) {
+					if (rewarded) {
+						return;
+					}
+					rewarded = true;
+
+
+
+
+
+					luckyItem = new ItemStack(Material.SLIME_BALL, 2);
+					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+					meta.setCustomModelData(2);
+					meta.setDisplayName("§6Silver Coin");
+					ArrayList<String> lore = new ArrayList<String>();
+					lore.add("§3Tier 2");
+					lore.add("§6§l§6§l");
+					meta.setLore(lore);
+					luckyItem.setItemMeta(meta);
+					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+					itemName = ("§6§l2 Silver Coins");
+
+				}
+				if(randDouble <= 0.5) {
+					if (rewarded) {
+						return;
+					}
+					rewarded = true;
+				
+
+				
+					luckyItem = new ItemStack(Material.SLIME_BALL, 5);
+					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+					meta.setCustomModelData(1);
+					meta.setDisplayName("§6Bronze Coin");
+					ArrayList<String> lore = new ArrayList<String>();
+					lore.add("§3Tier 1");
+					lore.add("§6§l§6§l");
+					meta.setLore(lore);
+					luckyItem.setItemMeta(meta);
+					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+					itemName = ("§6§l5 Bronze Coins");
+				}
+				if(randDouble <= 1) {
+					if (rewarded) {
+						return;
+					}
+					rewarded = true;
+
+					//repair scroll or tome, do another random
+					double randDouble2 = Math.random();
 			
+					if(randDouble2 <= 0.3) {
+						if (rewarded) {
+							return;
+						}
+						rewarded = true;
+						itemName = ("§6§lA Repair Tome");
+						luckyItem = new ItemStack(Material.BOOK, 1);
+						ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.BOOK);
+						meta.setDisplayName("§3§lRepair Tome");
+						ArrayList<String> lore = new ArrayList<String>();
+						lore.add("§6Drag onto an item to fully repair it.");
+						lore.add("§6Consumed on use.");
+						lore.add("§6§l§6§l");
+						meta.setLore(lore);
+						luckyItem.setItemMeta(meta);
+						luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+
+					}
+					else {
+						if (rewarded) {
+							return;
+						}
+						rewarded = true;
+						//scroll					
+
+						itemName = ("§6§lA Repair Scroll");
+						luckyItem = new ItemStack(Material.PAPER, 1);
+						ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.PAPER);
+						meta.setDisplayName("§3§lRepair Scroll");
+						ArrayList<String> lore = new ArrayList<String>();
+						lore.add("§6Drag onto an item to repair it for 400 durability.");
+						lore.add("§6Consumed on use.");
+						lore.add("§6§l§6§l");
+						meta.setLore(lore);
+						luckyItem.setItemMeta(meta);
+						luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+					}
+				}
+
+			} 
+			if (luckyItem != null) {
+			new BukkitRunnable() {
+
+				@Override
+				public void run() {
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), luckyItem);
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§3You were lucky and found " + itemName);
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
+					luckyItem = null;
+				}
+			}.runTask(plugin);
+			}
 		}
+
+
 	}
+
 	public class HistoryCommand implements CommandExecutor {
 
-        // This method is called, when somebody uses our command
-        @Override
-        @EventHandler
-        public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        	if (sender instanceof Player) {
-        		if (players.containsKey(((Player) sender).getUniqueId())) {
-        			PlayerData data = players.get(((Player) sender).getUniqueId());
-        			sender.sendMessage("§7****************************************");
-        			
-        			LinkedHashMap<String, String> history = new LinkedHashMap<String, String>();
-        			history = data.getHistory();
-        			for (Entry<String, String> entry : history.entrySet()) {
-        			    String key = entry.getKey();
-        			    Object value = entry.getValue();
-        			    sender.sendMessage("§7" + key + " : §6" + value);
-        			}
-        			DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-        			String numberAsString = decimalFormat.format(data.getAmountEarnt());
-        			sender.sendMessage("§7Total : §6" + numberAsString);
-        			sender.sendMessage("§7****************************************");
-        		}
-        		else {
-        			sender.sendMessage("§7No history to display yet.");
-        		}
-        	}
-            return true;
-        }
-    }
+		// This method is called, when somebody uses our command
+		@Override
+		@EventHandler
+		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+			if (sender instanceof Player) {
+				if (players.containsKey(((Player) sender).getUniqueId())) {
+					PlayerData data = players.get(((Player) sender).getUniqueId());
+					sender.sendMessage("§7****************************************");
+
+					LinkedHashMap<String, String> history = new LinkedHashMap<String, String>();
+					history = data.getHistory();
+					for (Entry<String, String> entry : history.entrySet()) {
+						String key = entry.getKey();
+						Object value = entry.getValue();
+						sender.sendMessage("§7" + key + " : §6" + value);
+					}
+					DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+					String numberAsString = decimalFormat.format(data.getAmountEarnt());
+					sender.sendMessage("§7Total : §6" + numberAsString);
+					sender.sendMessage("§7****************************************");
+				}
+				else {
+					sender.sendMessage("§7No history to display yet.");
+				}
+			}
+			return true;
+		}
+	}
 }
