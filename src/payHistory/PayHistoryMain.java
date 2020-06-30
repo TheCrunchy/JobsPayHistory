@@ -37,6 +37,8 @@ public class PayHistoryMain extends JavaPlugin {
 	private HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
 	ItemStack luckyItem = null; 
 	String itemName = "";
+	HashMap<UUID, ItemStack> playersThatGetLoot = new HashMap<UUID, ItemStack>();
+	HashMap<UUID, String> names = new HashMap<UUID, String>();
 	public class PayListener implements Listener
 	{
 		@SuppressWarnings("deprecation")
@@ -53,6 +55,28 @@ public class PayHistoryMain extends JavaPlugin {
 			double boost = 0;
 			double tempPayment1 = 0;
 			double tempPayment2 = 0;
+			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()) == null) {
+				return;
+			}
+
+			Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
+			double base = 0.1;
+			double added = 0;
+			if (player.hasPermission("CrunchRelics.10")) {
+				added = 0.1;
+			}
+			if (player.hasPermission("CrunchRelics.20")) {
+				added = 0.2;
+			}
+			if (player.hasPermission("CrunchRelics.30")) {
+				added = 0.3;
+			}
+			if (player.hasPermission("CrunchRelics.40")) {
+				added = 0.4;
+			}
+			if (player.hasPermission("CrunchRelics.50")) {
+				added = 0.4;
+			}
 			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand() != null) {
 				//do checks for bonus moneys
 				boost = 0;
@@ -132,43 +156,17 @@ public class PayHistoryMain extends JavaPlugin {
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Jobs payment : §6" + numberAsString);
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
+
 			boolean rewarded = false;
 
-
-			Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
-			if(randDouble <= 0.2) {
+			base += added;
+			
+			if(randDouble <= base) {
 				//10% chance of getting an item
-
+				System.out.println(base);
 				randDouble = Math.random();
+			
 				if(randDouble <= 0.1) {
-					if (rewarded) {
-						return;
-					}
-					rewarded = true;
-
-				
-					if (rewarded) {
-						return;
-					}
-					rewarded = true;
-					
-					luckyItem = new ItemStack(Material.SLIME_BALL, 1);
-					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-					meta.setCustomModelData(3);
-					meta.setDisplayName("§6Gold Coin");
-					ArrayList<String> lore = new ArrayList<String>();
-					lore.add("§3Tier 3");
-					lore.add("§6§l§6§l");
-					meta.setLore(lore);
-					luckyItem.setItemMeta(meta);
-					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-				
-					itemName = ("§6§l1 Gold Coin");
-				
-				}
-
-
-				if(randDouble <= 0.3) {
 					if (rewarded) {
 						return;
 					}
@@ -181,16 +179,19 @@ public class PayHistoryMain extends JavaPlugin {
 					luckyItem = new ItemStack(Material.SLIME_BALL, 2);
 					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
 					meta.setCustomModelData(2);
-					meta.setDisplayName("§6Silver Coin");
+					meta.setDisplayName("§6Silver Relic");
 					ArrayList<String> lore = new ArrayList<String>();
 					lore.add("§3Tier 2");
 					lore.add("§6§l§6§l");
 					meta.setLore(lore);
 					luckyItem.setItemMeta(meta);
 					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-					itemName = ("§6§l2 Silver Coins");
-
+					itemName = ("§6§l2 Silver Relics");
+					playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
+					names.put(event.getPlayer().getUniqueId(), itemName);
 				}
+				if(randDouble <= 1) {
+					randDouble = Math.random();
 				if(randDouble <= 0.5) {
 					if (rewarded) {
 						return;
@@ -202,48 +203,24 @@ public class PayHistoryMain extends JavaPlugin {
 					luckyItem = new ItemStack(Material.SLIME_BALL, 5);
 					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
 					meta.setCustomModelData(1);
-					meta.setDisplayName("§6Bronze Coin");
+					meta.setDisplayName("§6Bronze Relic");
 					ArrayList<String> lore = new ArrayList<String>();
 					lore.add("§3Tier 1");
 					lore.add("§6§l§6§l");
 					meta.setLore(lore);
 					luckyItem.setItemMeta(meta);
 					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-					itemName = ("§6§l5 Bronze Coins");
-				}
-				if(randDouble <= 1) {
+					itemName = ("§6§l5 Bronze Relics");
+					playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
+					names.put(event.getPlayer().getUniqueId(), itemName);
+					
+				 }
+				else {
 					if (rewarded) {
 						return;
 					}
 					rewarded = true;
-
-					//repair scroll or tome, do another random
-					double randDouble2 = Math.random();
-			
-					if(randDouble2 <= 0.3) {
-						if (rewarded) {
-							return;
-						}
-						rewarded = true;
-						itemName = ("§6§lA Repair Tome");
-						luckyItem = new ItemStack(Material.BOOK, 1);
-						ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.BOOK);
-						meta.setDisplayName("§3§lRepair Tome");
-						ArrayList<String> lore = new ArrayList<String>();
-						lore.add("§6Drag onto an item to fully repair it.");
-						lore.add("§6Consumed on use.");
-						lore.add("§6§l§6§l");
-						meta.setLore(lore);
-						luckyItem.setItemMeta(meta);
-						luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-
-					}
-					else {
-						if (rewarded) {
-							return;
-						}
-						rewarded = true;
-						//scroll					
+						
 
 						itemName = ("§6§lA Repair Scroll");
 						luckyItem = new ItemStack(Material.PAPER, 1);
@@ -256,25 +233,35 @@ public class PayHistoryMain extends JavaPlugin {
 						meta.setLore(lore);
 						luckyItem.setItemMeta(meta);
 						luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-				
+						playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
+						names.put(event.getPlayer().getUniqueId(), itemName);
 					}
 				}
-
-			} 
-			if (luckyItem != null) {
+				}
+				
+				
+			
+			if (playersThatGetLoot.containsKey(event.getPlayer().getUniqueId())) {
 			new BukkitRunnable() {
 
 				@Override
 				public void run() {
-					Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), luckyItem);
+		
+						ItemStack item = playersThatGetLoot.get(event.getPlayer().getUniqueId());
+						String name = names.get(event.getPlayer().getUniqueId());
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), item);
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
-					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§3You were lucky and found " + itemName);
+					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§3You were lucky and found " + name);
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
-					luckyItem = null;
+					System.out.println(event.getPlayer().getName() + " " + name);			
+					playersThatGetLoot.remove(event.getPlayer().getUniqueId());
+					
+					names.remove(event.getPlayer().getUniqueId());
 				}
 			}.runTask(plugin);
 			}
 		}
+		
 
 
 	}
