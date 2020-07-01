@@ -102,6 +102,24 @@ public class PayHistoryMain extends JavaPlugin {
 						case "50% jobs money boost":
 							boost += 0.5;
 							break;
+						case "5% jobs money boost while in offhand":
+							boost += 0.05;
+							break;
+						case "10% jobs money boost while in offhand":
+							boost += 0.1;
+							break;
+						case "15% jobs money boost while in offhand":
+							boost += 0.15;
+							break;
+						case "20% jobs money boost while in offhand":
+							boost += 0.2;
+							break;
+						case "25% jobs money boost while in offhand":
+							boost += 0.25;
+							break;
+						case "50% jobs money boost while in offhand":
+							boost += 0.5;
+							break;
 						}
 					}
 
@@ -133,6 +151,24 @@ public class PayHistoryMain extends JavaPlugin {
 							boost += 0.25;
 							break;
 						case "50% jobs money boost":
+							boost += 0.5;
+							break;
+						case "5% jobs money boost while in offhand":
+							boost += 0.05;
+							break;
+						case "10% jobs money boost while in offhand":
+							boost += 0.1;
+							break;
+						case "15% jobs money boost while in offhand":
+							boost += 0.15;
+							break;
+						case "20% jobs money boost while in offhand":
+							boost += 0.2;
+							break;
+						case "25% jobs money boost while in offhand":
+							boost += 0.25;
+							break;
+						case "50% jobs money boost while in offhand":
 							boost += 0.5;
 							break;
 						}
