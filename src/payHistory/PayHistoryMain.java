@@ -313,47 +313,47 @@ public class PayHistoryMain extends JavaPlugin {
 
 		
 				
+				ItemStack bronze = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				meta.setCustomModelData(1);
+				meta.setDisplayName("§6Bronze Relic");
+				ArrayList<String> lore = new ArrayList<String>();
+				lore.add("§3Tier 1");
+				lore.add("§6§l§6§l");
+				meta.setLore(lore);
+				bronze.setItemMeta(meta);
+				bronze.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
 				
+		
+				ItemStack silver = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta silvermeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				silvermeta.setCustomModelData(2);
+				silvermeta.setDisplayName("§6Silver Relic");
+				ArrayList<String> silverlore = new ArrayList<String>();
+				silverlore.add("§3Tier 2");
+				silverlore.add("§6§l§6§l");
+				silvermeta.setLore(silverlore);
+				silver.setItemMeta(silvermeta);
+				silver.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+		
+				ItemStack gold = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta goldmeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				goldmeta.setCustomModelData(3);
+				goldmeta.setDisplayName("§6Silver Relic");
+				ArrayList<String> goldlore = new ArrayList<String>();
+				goldlore.add("§3Tier 3");
+				goldlore.add("§6§l§6§l");
+				goldmeta.setLore(goldlore);
+				gold.setItemMeta(goldmeta);
+				gold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
 				Player player = (Player) sender;
 				ItemStack[] inv = player.getInventory().getStorageContents();
 				for (ItemStack item : inv) {
 					if (item == null) {
 						break;
 					}
-					ItemStack bronze = new ItemStack(Material.SLIME_BALL, item.getAmount());
-					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-					meta.setCustomModelData(1);
-					meta.setDisplayName("§6Bronze Relic");
-					ArrayList<String> lore = new ArrayList<String>();
-					lore.add("§3Tier 1");
-					lore.add("§6§l§6§l");
-					meta.setLore(lore);
-					bronze.setItemMeta(meta);
-					bronze.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-					
-			
-					ItemStack silver = new ItemStack(Material.SLIME_BALL, item.getAmount());
-					ItemMeta silvermeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-					silvermeta.setCustomModelData(2);
-					silvermeta.setDisplayName("§6Silver Relic");
-					ArrayList<String> silverlore = new ArrayList<String>();
-					silverlore.add("§3Tier 2");
-					silverlore.add("§6§l§6§l");
-					silvermeta.setLore(silverlore);
-					silver.setItemMeta(silvermeta);
-					silver.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-					
-			
-					ItemStack gold = new ItemStack(Material.SLIME_BALL, item.getAmount());
-					ItemMeta goldmeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-					goldmeta.setCustomModelData(3);
-					goldmeta.setDisplayName("§6Silver Relic");
-					ArrayList<String> goldlore = new ArrayList<String>();
-					goldlore.add("§3Tier 3");
-					goldlore.add("§6§l§6§l");
-					goldmeta.setLore(goldlore);
-					gold.setItemMeta(goldmeta);
-					gold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+		
 					
 					if (item.isSimilar(bronze)) {
 					
