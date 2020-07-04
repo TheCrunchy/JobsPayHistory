@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +33,7 @@ public class PayHistoryMain extends JavaPlugin {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PayListener(), this);
 		this.getCommand("ph").setExecutor(new HistoryCommand());
+		this.getCommand("convert").setExecutor(new ConvertCommand());
 		this.plugin = this;
 	}
 	private HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
@@ -301,7 +303,107 @@ public class PayHistoryMain extends JavaPlugin {
 
 
 	}
+	public class ConvertCommand implements CommandExecutor {
 
+		// This method is called, when somebody uses our command
+		@Override
+		@EventHandler
+		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+			if (sender instanceof Player) {
+				ItemStack bronze = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				meta.setCustomModelData(1);
+				meta.setDisplayName("§6Bronze Relic");
+				ArrayList<String> lore = new ArrayList<String>();
+				lore.add("§3Tier 1");
+				lore.add("§6§l§6§l");
+				meta.setLore(lore);
+				bronze.setItemMeta(meta);
+				bronze.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+		
+				ItemStack silver = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta silvermeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				meta.setCustomModelData(2);
+				meta.setDisplayName("§6Silver Relic");
+				ArrayList<String> silverlore = new ArrayList<String>();
+				lore.add("§3Tier 2");
+				lore.add("§6§l§6§l");
+				silvermeta.setLore(silverlore);
+				silver.setItemMeta(silvermeta);
+				silver.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+		
+				ItemStack gold = new ItemStack(Material.SLIME_BALL, 1);
+				ItemMeta goldmeta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+				meta.setCustomModelData(3);
+				meta.setDisplayName("§6Silver Relic");
+				ArrayList<String> goldlore = new ArrayList<String>();
+				lore.add("§3Tier 3");
+				lore.add("§6§l§6§l");
+				goldmeta.setLore(goldlore);
+				gold.setItemMeta(goldmeta);
+				gold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+				
+		
+				
+				
+				Player player = (Player) sender;
+				PlayerInventory inv = player.getInventory();
+				for (ItemStack item : inv) {
+					if (item.isSimilar(bronze)) {
+						
+						ItemStack newbronze = new ItemStack(Material.SLIME_BALL, item.getAmount());
+						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+						meta.setCustomModelData(1);
+						meta.setDisplayName("§6Bronze Relic");
+						ArrayList<String> lore2 = new ArrayList<String>();
+						lore.add("§3Tier 1");
+						lore.add("§6§l");
+						meta2.setLore(lore2);
+						newbronze.setAmount(item.getAmount());
+						newbronze.setItemMeta(meta2);
+						newbronze.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+						item.setAmount(0);
+						player.getInventory().addItem(newbronze);
+					
+					}
+					if (item.isSimilar(silver)) {
+						item.setAmount(0);
+						ItemStack newsilver = new ItemStack(Material.SLIME_BALL, item.getAmount());
+						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+						meta.setCustomModelData(2);
+						meta.setDisplayName("§6Silver Relic");
+						ArrayList<String> lore2 = new ArrayList<String>();
+						lore.add("§3Tier 2");
+						lore.add("§6§l");
+						meta2.setLore(lore2);
+						newsilver.setAmount(item.getAmount());
+						newsilver.setItemMeta(meta2);
+						newsilver.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+						item.setAmount(0);
+						player.getInventory().addItem(newsilver);
+					}
+					if (item.isSimilar(gold)) {
+						item.setAmount(0);
+						ItemStack newgold = new ItemStack(Material.SLIME_BALL, item.getAmount());
+						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
+						meta.setCustomModelData(3);
+						meta.setDisplayName("§6GOld Relic");
+						ArrayList<String> lore2 = new ArrayList<String>();
+						lore.add("§3Tier 3");
+						lore.add("§6§l");
+						meta2.setLore(lore2);
+						newgold.setItemMeta(meta2);
+						newgold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+						item.setAmount(0);
+						player.getInventory().addItem(newgold);
+					}
+				}
+			}
+			return true;
+		}
+	}
 	public class HistoryCommand implements CommandExecutor {
 
 		// This method is called, when somebody uses our command

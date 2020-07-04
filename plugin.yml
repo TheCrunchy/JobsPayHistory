@@ -6,3 +6,7 @@ commands:
        description: history command
        default: false
        usage: ph
+   convert:
+       description: Convert relics to 1.16 format
+       default: false
+       usage: convert
