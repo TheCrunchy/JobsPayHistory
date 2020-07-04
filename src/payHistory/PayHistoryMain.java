@@ -351,15 +351,18 @@ public class PayHistoryMain extends JavaPlugin {
 				Player player = (Player) sender;
 				PlayerInventory inv = player.getInventory();
 				for (ItemStack item : inv) {
+					if (item == null) {
+						break;
+					}
 					if (item.isSimilar(bronze)) {
 						
 						ItemStack newbronze = new ItemStack(Material.SLIME_BALL, item.getAmount());
 						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta.setCustomModelData(1);
-						meta.setDisplayName("§6Bronze Relic");
+						meta2.setCustomModelData(1);
+						meta2.setDisplayName("§6Bronze Relic");
 						ArrayList<String> lore2 = new ArrayList<String>();
-						lore.add("§3Tier 1");
-						lore.add("§6§l");
+						lore2.add("§3Tier 1");
+						lore2.add("§6§l");
 						meta2.setLore(lore2);
 						newbronze.setAmount(item.getAmount());
 						newbronze.setItemMeta(meta2);
@@ -372,11 +375,11 @@ public class PayHistoryMain extends JavaPlugin {
 						item.setAmount(0);
 						ItemStack newsilver = new ItemStack(Material.SLIME_BALL, item.getAmount());
 						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta.setCustomModelData(2);
-						meta.setDisplayName("§6Silver Relic");
+						meta2.setCustomModelData(2);
+						meta2.setDisplayName("§6Silver Relic");
 						ArrayList<String> lore2 = new ArrayList<String>();
-						lore.add("§3Tier 2");
-						lore.add("§6§l");
+						lore2.add("§3Tier 2");
+						lore2.add("§6§l");
 						meta2.setLore(lore2);
 						newsilver.setAmount(item.getAmount());
 						newsilver.setItemMeta(meta2);
@@ -388,11 +391,11 @@ public class PayHistoryMain extends JavaPlugin {
 						item.setAmount(0);
 						ItemStack newgold = new ItemStack(Material.SLIME_BALL, item.getAmount());
 						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta.setCustomModelData(3);
-						meta.setDisplayName("§6GOld Relic");
+						meta2.setCustomModelData(3);
+						meta2.setDisplayName("§6GOld Relic");
 						ArrayList<String> lore2 = new ArrayList<String>();
-						lore.add("§3Tier 3");
-						lore.add("§6§l");
+						lore2.add("§3Tier 3");
+						lore2.add("§6§l");
 						meta2.setLore(lore2);
 						newgold.setItemMeta(meta2);
 						newgold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
