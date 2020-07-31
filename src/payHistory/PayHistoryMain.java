@@ -18,6 +18,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -33,7 +34,6 @@ public class PayHistoryMain extends JavaPlugin {
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PayListener(), this);
 		this.getCommand("ph").setExecutor(new HistoryCommand());
-		this.getCommand("convert").setExecutor(new ConvertCommand());
 		this.plugin = this;
 	}
 	private HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
@@ -85,7 +85,7 @@ public class PayHistoryMain extends JavaPlugin {
 				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand();
 				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 					for (String s : item.getItemMeta().getLore()) {
-						switch (s) {
+						switch (s.toLowerCase()) {
 						case "5% jobs money boost":
 							boost += 0.05;
 							break;
@@ -210,10 +210,32 @@ public class PayHistoryMain extends JavaPlugin {
 					}
 					rewarded = true;
 
+				
+					Double randDouble2 = Math.random();
 
-
-
-
+					if(randDouble2 <= 0.2) {
+						if (rewarded) {
+							return;
+						}
+						else {
+							luckyItem = new ItemStack(Material.EMERALD, 1);
+							ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.EMERALD);
+							meta.setCustomModelData(2);
+							meta.setDisplayName("§dRusty Key§f");
+							luckyItem.setDurability((short) 0);
+							ArrayList<String> lore = new ArrayList<String>();
+							lore.add("§6Right click to open");
+							meta.setLore(lore);
+							meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+							luckyItem.setItemMeta(meta);
+							luckyItem.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 10);
+							
+							itemName = ("§6§lRusty Key");
+							playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
+							names.put(event.getPlayer().getUniqueId(), itemName);
+						}
+					}
+					else {
 					luckyItem = new ItemStack(Material.SLIME_BALL, 2);
 					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
 					meta.setCustomModelData(2);
@@ -226,6 +248,7 @@ public class PayHistoryMain extends JavaPlugin {
 					itemName = ("§6§l2 Silver Relics");
 					playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
 					names.put(event.getPlayer().getUniqueId(), itemName);
+					}
 				}
 				if(randDouble <= 1) {
 					randDouble = Math.random();
@@ -263,7 +286,8 @@ public class PayHistoryMain extends JavaPlugin {
 						ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.PAPER);
 						meta.setDisplayName("§3§lRepair Scroll");
 						ArrayList<String> lore = new ArrayList<String>();
-						lore.add("§6Drag onto an item to repair it for 400 durability.");
+						lore.add("§6Drag onto an item to repair");
+						lore.add("§6it for 400 durability.");
 						lore.add("§6Consumed on use.");
 						lore.add("§6§l");
 						meta.setLore(lore);
@@ -285,13 +309,19 @@ public class PayHistoryMain extends JavaPlugin {
 		
 						ItemStack item = playersThatGetLoot.get(event.getPlayer().getUniqueId());
 						String name = names.get(event.getPlayer().getUniqueId());
-					Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), item);
+						if (player.getInventory().firstEmpty() > -1) {
+							player.getInventory().addItem(item);
+						}
+						else {
+							Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), item);
+						}
+				
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§3You were lucky and found " + name);
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 					System.out.println(event.getPlayer().getName() + " " + name);			
 					playersThatGetLoot.remove(event.getPlayer().getUniqueId());
-					
+		
 					names.remove(event.getPlayer().getUniqueId());
 				}
 			}.runTask(plugin);
@@ -301,77 +331,6 @@ public class PayHistoryMain extends JavaPlugin {
 
 
 	}
-	public class ConvertCommand implements CommandExecutor {
-
-		// This method is called, when somebody uses our command
-		@Override
-		@EventHandler
-		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-			if (sender instanceof Player) {
-				Player player = (Player) sender;
-			    ItemStack[] inv = player.getInventory().getStorageContents();
-				//sender.sendMessage("§3Remember to hold the item in your hand that you wish to convert.");
-				for (ItemStack item : inv) {
-					if (item != null) {
-					if (item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().contains("§6Bronze Relic") && item.getItemMeta().getCustomModelData() == 1) {
-	
-						ItemStack newbronze = new ItemStack(Material.SLIME_BALL, item.getAmount());
-						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta2.setCustomModelData(1);
-						
-						meta2.setDisplayName("§6Bronze Relic");
-						ArrayList<String> lore2 = new ArrayList<String>();
-						lore2.add("§3Tier 1");
-			
-						meta2.setLore(lore2);
-						newbronze.setAmount(item.getAmount());
-						newbronze.setItemMeta(meta2);
-						newbronze.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-						item.setAmount(0);
-						player.getInventory().addItem(newbronze);
-						sender.sendMessage("§3Converting Bronze : " + newbronze.getAmount());
-					
-					}
-					if  (item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().contains("§6Silver Relic") && item.getItemMeta().getCustomModelData() == 2) {
-		
-						ItemStack newsilver = new ItemStack(Material.SLIME_BALL, item.getAmount());
-						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta2.setCustomModelData(2);
-						meta2.setDisplayName("§6Silver Relic");
-						ArrayList<String> lore2 = new ArrayList<String>();
-						lore2.add("§3Tier 2");
-					
-						meta2.setLore(lore2);
-						newsilver.setAmount(item.getAmount());
-						newsilver.setItemMeta(meta2);
-						newsilver.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-						item.setAmount(0);
-						player.getInventory().addItem(newsilver);
-						sender.sendMessage("§3Converting Bronze : " + newsilver.getAmount());
-			
-					}
-					if  (item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().contains("§6Gold Relic") && item.getItemMeta().getCustomModelData() == 3) {
-						ItemStack newgold = new ItemStack(Material.SLIME_BALL, item.getAmount());
-						ItemMeta meta2 = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
-						meta2.setCustomModelData(3);
-						meta2.setDisplayName("§6GOld Relic");
-						ArrayList<String> lore2 = new ArrayList<String>();
-						lore2.add("§3Tier 3");
-				
-						meta2.setLore(lore2);
-						newgold.setItemMeta(meta2);
-						newgold.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
-						item.setAmount(0);
-						player.getInventory().addItem(newgold);
-						sender.sendMessage("§3Converting Bronze : " + newgold.getAmount());
-				
-					}
-					}
-				}
-			}
-			return true;
-		}
-	}
 	public class HistoryCommand implements CommandExecutor {
 
 		// This method is called, when somebody uses our command
@@ -379,6 +338,35 @@ public class PayHistoryMain extends JavaPlugin {
 		@EventHandler
 		public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 			if (sender instanceof Player) {
+				if (sender.isOp() && args != null && args.length > 0) {
+				     if (Bukkit.getPlayer(args[0]) != null) {
+			            	String name = Bukkit.getPlayer(args[0]).getName();
+			            	UUID id = Bukkit.getPlayer(args[0]).getUniqueId();
+			    			if (players.containsKey(id)) {
+								PlayerData data = players.get(id);
+								sender.sendMessage("§7****************************************");
+
+								LinkedHashMap<String, String> history = new LinkedHashMap<String, String>();
+								history = data.getHistory();
+								for (Entry<String, String> entry : history.entrySet()) {
+									String key = entry.getKey();
+									Object value = entry.getValue();
+									sender.sendMessage("§7" + key + " : §6" + value);
+								}
+								DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+								String numberAsString = decimalFormat.format(data.getAmountEarnt());
+								sender.sendMessage("§7Total : §6" + numberAsString);
+								sender.sendMessage("§7****************************************");
+							}
+							else {
+								sender.sendMessage("§7No history to display yet.");
+							}
+			            }
+			            else {
+			            	sender.sendMessage("Cant find that player");
+			            }
+				     return true;
+				}
 				if (players.containsKey(((Player) sender).getUniqueId())) {
 					PlayerData data = players.get(((Player) sender).getUniqueId());
 					sender.sendMessage("§7****************************************");
