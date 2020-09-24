@@ -28,14 +28,20 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.gamingmesh.jobs.api.JobsPaymentEvent;
 
+import io.lumine.xikage.mythicmobs.MythicMobs;
+
 public class PayHistoryMain extends JavaPlugin {
 	Plugin plugin;
+	
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PayListener(), this);
 		this.getCommand("ph").setExecutor(new HistoryCommand());
 		this.plugin = this;
+	
+		
 	}
+
 	private HashMap<UUID, PlayerData> players = new HashMap<UUID, PlayerData>();
 	ItemStack luckyItem = null; 
 	String itemName = "";
@@ -64,6 +70,25 @@ public class PayHistoryMain extends JavaPlugin {
 			Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 			double base = 0.1;
 			double added = 0;
+			double donor = 0;
+			if (player.hasPermission("CrunchJobs.05")) {
+				donor = 0.05;
+			}
+			if (player.hasPermission("CrunchJobs.10")) {
+				donor = 0.1;
+			}
+			if (player.hasPermission("CrunchJobs.15")) {
+				donor = 0.15;
+			}
+			if (player.hasPermission("CrunchJobs.20")) {
+				donor = 0.2;
+			}
+			if (player.hasPermission("CrunchJobs.25")) {
+				donor = 0.25;
+			}
+			if (player.hasPermission("CrunchJobs.30")) {
+				donor = 0.3;
+			}
 			if (player.hasPermission("CrunchRelics.10")) {
 				added = 0.1;
 			}
@@ -86,6 +111,26 @@ public class PayHistoryMain extends JavaPlugin {
 				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 					for (String s : item.getItemMeta().getLore()) {
 						switch (s.toLowerCase()) {
+						default:
+							break;
+						case "§55% jobs money boost":
+							boost += 0.05;
+							break;
+						case "§510% jobs money boost":
+							boost += 0.1;
+							break;
+						case "§515% jobs money boost":
+							boost += 0.15;
+							break;
+						case "§520% jobs money boost":
+							boost += 0.2;
+							break;
+						case "§525% jobs money boost":
+							boost += 0.25;
+							break;
+						case "§550% jobs money boost":
+							boost += 0.5;
+							break;
 						case "5% jobs money boost":
 							boost += 0.05;
 							break;
@@ -104,22 +149,22 @@ public class PayHistoryMain extends JavaPlugin {
 						case "50% jobs money boost":
 							boost += 0.5;
 							break;
-						case "5% jobs money boost while in offhand":
+						case "§55% jobs money boost while in offhand":
 							boost += 0.05;
 							break;
-						case "10% jobs money boost while in offhand":
+						case "§510% jobs money boost while in offhand":
 							boost += 0.1;
 							break;
-						case "15% jobs money boost while in offhand":
+						case "§515% jobs money boost while in offhand":
 							boost += 0.15;
 							break;
-						case "20% jobs money boost while in offhand":
+						case "§520% jobs money boost while in offhand":
 							boost += 0.2;
 							break;
-						case "25% jobs money boost while in offhand":
+						case "§525% jobs money boost while in offhand":
 							boost += 0.25;
 							break;
-						case "50% jobs money boost while in offhand":
+						case "§550% jobs money boost while in offhand":
 							boost += 0.5;
 							break;
 						}
@@ -137,6 +182,26 @@ public class PayHistoryMain extends JavaPlugin {
 				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 					for (String s : item.getItemMeta().getLore()) {
 						switch (s) {
+						default:
+							break;
+						case "§55% jobs money boost":
+							boost += 0.05;
+							break;
+						case "§510% jobs money boost":
+							boost += 0.1;
+							break;
+						case "§515% jobs money boost":
+							boost += 0.15;
+							break;
+						case "§520% jobs money boost":
+							boost += 0.2;
+							break;
+						case "§525% jobs money boost":
+							boost += 0.25;
+							break;
+						case "§550% jobs money boost":
+							boost += 0.5;
+							break;
 						case "5% jobs money boost":
 							boost += 0.05;
 							break;
@@ -155,22 +220,22 @@ public class PayHistoryMain extends JavaPlugin {
 						case "50% jobs money boost":
 							boost += 0.5;
 							break;
-						case "5% jobs money boost while in offhand":
+						case "§55% jobs money boost while in offhand":
 							boost += 0.05;
 							break;
-						case "10% jobs money boost while in offhand":
+						case "§510% jobs money boost while in offhand":
 							boost += 0.1;
 							break;
-						case "15% jobs money boost while in offhand":
+						case "§515% jobs money boost while in offhand":
 							boost += 0.15;
 							break;
-						case "20% jobs money boost while in offhand":
+						case "§520% jobs money boost while in offhand":
 							boost += 0.2;
 							break;
-						case "25% jobs money boost while in offhand":
+						case "§525% jobs money boost while in offhand":
 							boost += 0.25;
 							break;
-						case "50% jobs money boost while in offhand":
+						case "§550% jobs money boost while in offhand":
 							boost += 0.5;
 							break;
 						}
@@ -183,16 +248,24 @@ public class PayHistoryMain extends JavaPlugin {
 			}	
 			double randDouble = Math.random();
 
-
+			if (donor > 0) {
+				payment = payment + (payment * donor);
+			}
 			payment = payment + tempPayment1 + tempPayment2;
-
+	
 			data.addToHistory(payment);
 			players.put(event.getPlayer().getUniqueId(), data);
 			DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-			String numberAsString = decimalFormat.format(payment);
+			String numberAsString = decimalFormat.format(tempPayment1 + tempPayment2);
+			String baseAmnt = decimalFormat.format(event.getAmount());
+			String donorAmnt = decimalFormat.format(event.getAmount() * donor);
 			event.setAmount(payment);
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
-			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Jobs payment : §6" + numberAsString);
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Jobs payment : §6" + baseAmnt + " " + "§7Item Bonus : §6" + numberAsString);
+			if (donor > 0) {
+				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Premium Bonus : §6" + donorAmnt);
+			}
+	
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 
 			boolean rewarded = false;
@@ -236,7 +309,7 @@ public class PayHistoryMain extends JavaPlugin {
 						}
 					}
 					else {
-					luckyItem = new ItemStack(Material.SLIME_BALL, 2);
+					luckyItem =	new ItemStack(Material.SLIME_BALL, 2);
 					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
 					meta.setCustomModelData(2);
 					meta.setDisplayName("§6Silver Relic");
@@ -245,6 +318,7 @@ public class PayHistoryMain extends JavaPlugin {
 					meta.setLore(lore);
 					luckyItem.setItemMeta(meta);
 					luckyItem.addUnsafeEnchantment(Enchantment.DURABILITY, 10);
+					
 					itemName = ("§6§l2 Silver Relics");
 					playersThatGetLoot.put(event.getPlayer().getUniqueId(), luckyItem);
 					names.put(event.getPlayer().getUniqueId(), itemName);
@@ -260,7 +334,7 @@ public class PayHistoryMain extends JavaPlugin {
 				
 
 				
-					luckyItem = new ItemStack(Material.SLIME_BALL, 5);
+					luckyItem =	new ItemStack(Material.SLIME_BALL, 5);
 					ItemMeta meta = Bukkit.getItemFactory().getItemMeta(Material.SLIME_BALL);
 					meta.setCustomModelData(1);
 					meta.setDisplayName("§6Bronze Relic");
@@ -309,13 +383,17 @@ public class PayHistoryMain extends JavaPlugin {
 		
 						ItemStack item = playersThatGetLoot.get(event.getPlayer().getUniqueId());
 						String name = names.get(event.getPlayer().getUniqueId());
-						if (player.getInventory().firstEmpty() > -1) {
-							player.getInventory().addItem(item);
-						}
-						else {
-							Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), item);
-						}
-				
+//						if (player.getInventory().firstEmpty() > -1) {
+//							player.getInventory().addItem(item);
+//						}
+//						else {
+//							Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), item);
+//						}
+					  	  HashMap<Integer, ItemStack> remainingItems = player.getInventory().addItem(item);
+			        	  for (Integer key : remainingItems.keySet()) {
+			        		    // ...
+			        		  Bukkit.getPlayer(event.getPlayer().getUniqueId()).getWorld().dropItem(player.getLocation(), remainingItems.get(key));
+			        		}
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§3You were lucky and found " + name);
 					Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");

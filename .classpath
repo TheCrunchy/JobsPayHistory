@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Cameron/Documents/2 Local testing/Spigot/spigot-1.15.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Cameron/Documents/2 Local testing/Spigot/Jobs4.15.11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Cameron/Documents/2 Local testing/Spigot/Lobby Server/plugins/MythicMobs-4.10.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
