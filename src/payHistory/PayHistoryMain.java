@@ -261,11 +261,12 @@ public class PayHistoryMain extends JavaPlugin {
 			String donorAmnt = decimalFormat.format(event.getAmount() * donor);
 			event.setAmount(payment);
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
-			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Jobs payment : §6" + baseAmnt + " " + "§7Item Bonus : §6" + numberAsString);
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Base payment : §6" + baseAmnt);
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Item Bonus : §6" + numberAsString);
 			if (donor > 0) {
 				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Premium Bonus : §6" + donorAmnt);
 			}
-	
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("§7Total : §6" + decimalFormat.format(event.getAmount()));
 			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage("");
 
 			boolean rewarded = false;
