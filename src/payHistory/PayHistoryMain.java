@@ -28,7 +28,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.gamingmesh.jobs.api.JobsPaymentEvent;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
 
 public class PayHistoryMain extends JavaPlugin {
 	Plugin plugin;
