@@ -25,7 +25,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import com.gamingmesh.jobs.api.JobsPaymentEvent;
 
 
@@ -35,6 +34,9 @@ public class PayHistoryMain extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		getServer().getPluginManager().registerEvents(new PayListener(), this);
+	
+
+		 
 		this.getCommand("ph").setExecutor(new HistoryCommand());
 		this.plugin = this;
 	
@@ -48,6 +50,8 @@ public class PayHistoryMain extends JavaPlugin {
 	HashMap<UUID, String> names = new HashMap<UUID, String>();
 	public class PayListener implements Listener
 	{
+	
+		
 		@SuppressWarnings("deprecation")
 		@EventHandler
 		public void onPlayerPaid(JobsPaymentEvent event) {
@@ -70,6 +74,7 @@ public class PayHistoryMain extends JavaPlugin {
 			double base = 0.1;
 			double added = 0;
 			double donor = 0;
+			
 			if (player.hasPermission("CrunchJobs.05")) {
 				donor = 0.05;
 			}
@@ -103,13 +108,96 @@ public class PayHistoryMain extends JavaPlugin {
 			if (player.hasPermission("CrunchRelics.50")) {
 				added = 0.4;
 			}
-			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand() != null) {
-				//do checks for bonus moneys
-				boost = 0;
-				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand();
+			double headBonus = 0;
+			String playerName = "";
+			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getHelmet() != null) {
+				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getHelmet();
 				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 					for (String s : item.getItemMeta().getLore()) {
 						switch (s.toLowerCase()) {
+					
+						default:
+							break;
+						case "§51% jobs money boost":
+							boost += 0.01;
+							break;
+						case "§52.5% jobs money boost":
+							boost += 0.025;
+							break;
+						case "§55% jobs money boost":
+							boost += 0.05;
+							break;
+						case "§510% jobs money boost":
+							boost += 0.1;
+							break;
+						case "§515% jobs money boost":
+							boost += 0.15;
+							break;
+						case "§520% jobs money boost":
+							boost += 0.2;
+							break;
+						case "§525% jobs money boost":
+							boost += 0.25;
+							break;
+						case "§550% jobs money boost":
+							boost += 0.5;
+							break;
+						case "5% jobs money boost":
+							boost += 0.05;
+							break;
+						case "10% jobs money boost":
+							boost += 0.1;
+							break;
+						case "15% jobs money boost":
+							boost += 0.15;
+							break;
+						case "20% jobs money boost":
+							boost += 0.2;
+							break;
+						case "25% jobs money boost":
+							boost += 0.25;
+							break;
+						case "50% jobs money boost":
+							boost += 0.5;
+							break;
+						case "§55% jobs money boost while in offhand":
+							boost += 0.05;
+							break;
+						case "§510% jobs money boost while in offhand":
+							boost += 0.1;
+							break;
+						case "§515% jobs money boost while in offhand":
+							boost += 0.15;
+							break;
+						case "§520% jobs money boost while in offhand":
+							boost += 0.2;
+							break;
+						case "§525% jobs money boost while in offhand":
+							boost += 0.25;
+							break;
+						case "§550% jobs money boost while in offhand":
+							boost += 0.5;
+							break;
+						}
+					}
+
+				}
+				if (boost > 0) {
+					 headBonus = payment * boost;
+				}
+			}
+			if (Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand() != null) {
+				//do checks for bonus moneys
+				boost = 0;
+				
+				ItemStack item = Bukkit.getPlayer(event.getPlayer().getUniqueId()).getInventory().getItemInMainHand();
+				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
+					for (String s : item.getItemMeta().getLore()) {
+						if (s.contains("bought by")) {
+							playerName = s.split(" ")[2];
+						}
+						switch (s.toLowerCase()) {
+					
 						default:
 							break;
 						case "§55% jobs money boost":
@@ -180,6 +268,9 @@ public class PayHistoryMain extends JavaPlugin {
 				boost = 0;
 				if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
 					for (String s : item.getItemMeta().getLore()) {
+						if (s.contains("bought by")) {
+							playerName = s.split(" ")[2];
+						}
 						switch (s) {
 						default:
 							break;
@@ -241,6 +332,7 @@ public class PayHistoryMain extends JavaPlugin {
 
 					}
 				}
+			
 				if (boost > 0) {
 					tempPayment2 = payment * boost;
 				}
@@ -250,12 +342,16 @@ public class PayHistoryMain extends JavaPlugin {
 			if (donor > 0) {
 				payment = payment + (payment * donor);
 			}
-			payment = payment + tempPayment1 + tempPayment2;
+			if (playerName != "" && !playerName.equals(event.getPlayer().getName())) {
+				tempPayment1 = 0;
+				tempPayment2 = 0;
+			}
+			payment = payment + tempPayment1 + tempPayment2 + headBonus;
 	
 			data.addToHistory(payment);
 			players.put(event.getPlayer().getUniqueId(), data);
 			DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
-			String numberAsString = decimalFormat.format(tempPayment1 + tempPayment2);
+			String numberAsString = decimalFormat.format(tempPayment1 + tempPayment2 + headBonus);
 			String baseAmnt = decimalFormat.format(event.getAmount());
 			String donorAmnt = decimalFormat.format(event.getAmount() * donor);
 			event.setAmount(payment);

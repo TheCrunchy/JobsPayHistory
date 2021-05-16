@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="C:/Users/Cameron/Documents/2 Local testing/Spigot/spigot-1.15.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Cameron/Documents/2 Local testing/Spigot/Jobs4.15.11.jar"/>
+	<classpathentry kind="lib" path="E:/1 SEASON 2/paper.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
